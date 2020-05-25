@@ -14,6 +14,7 @@ import com.example.androidweatherapp.api.WeatherAPI;
 import com.example.androidweatherapp.api.WeatherApiInterface;
 import com.example.androidweatherapp.api.models.currentweatherdata.CurrentWeatherData;
 import com.example.androidweatherapp.fragments.CityWeatherFragment;
+import com.example.androidweatherapp.fragments.WeatherCardRVFragment;
 import com.example.androidweatherapp.interfaces.ItemClicked;
 import com.example.androidweatherapp.R;
 import com.example.androidweatherapp.service.CountdownResultReceiver;
@@ -57,6 +58,10 @@ public class MainActivity extends AppCompatActivity implements ItemClicked, Coun
 
         weatherDatabase = WeatherDatabase.getAppDatabase(this);
         getWeather();
+
+
+
+
     }
 
     private void redirectToNextActivity(){
@@ -66,12 +71,13 @@ public class MainActivity extends AppCompatActivity implements ItemClicked, Coun
 
     @Override
     public void onItemClicked(String index) {
-        CityWeatherFragment cityWeatherFragment = (CityWeatherFragment) getSupportFragmentManager().findFragmentById(R.id.cityFragment);
+        CityWeatherFragment cityWeatherFragment = (CityWeatherFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentCityWeather);
         if (cityWeatherFragment != null) {
             cityWeatherFragment.updateCityView(index);
 
         } else {
             CityWeatherFragment newFragment = new CityWeatherFragment();
+
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack(null);
