@@ -30,7 +30,7 @@
         android:padding="16dp">
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/searchCityText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

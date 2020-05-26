@@ -1,10 +1,11 @@
 package com.example.androidweatherapp.activities;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,14 +13,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidweatherapp.adapters.AddCityAdapter;
 import com.example.androidweatherapp.api.WeatherAPI;
 import com.example.androidweatherapp.api.WeatherApiInterface;
-import com.example.androidweatherapp.api.models.currentweatherdata.CurrentWeatherData;
+
 import com.example.androidweatherapp.api.models.findcity.FindCity;
+
 import com.example.androidweatherapp.interfaces.ItemClicked;
 import com.example.androidweatherapp.R;
 import com.example.androidweatherapp.storage.Weather;
 import com.example.androidweatherapp.storage.WeatherDatabase;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,12 +36,16 @@ public class AddCityActivity extends AppCompatActivity implements ItemClicked {
     private RecyclerView.Adapter addCityAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
+    private ArrayList<com.example.androidweatherapp.api.models.findcity.List> data =  new ArrayList<>();
+
     private WeatherDatabase weatherDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_city);
+
+        EditText searchCityText = findViewById(R.id.searchCityText);
 
         ImageView searchView = findViewById(R.id.citySearchView);
         searchView.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_24dp));
@@ -47,11 +54,15 @@ public class AddCityActivity extends AppCompatActivity implements ItemClicked {
             @Override
             public void onClick(View v) {
                 //TODO: API City Call
-
-                // searchForCityAsync("London");
-                searchForCitySync("London");
+                if (!TextUtils.isEmpty(searchCityText.getText())) {
+                    // searchForCityAsync("London");
+                    //searchForCitySync("London");
+                    searchForCitySync(searchCityText.getText().toString());
+                }
             }
         });
+
+
 
 
         recyclerView = (RecyclerView) findViewById(R.id.recycleViewAddCity);
@@ -61,17 +72,21 @@ public class AddCityActivity extends AppCompatActivity implements ItemClicked {
 
         recyclerView.setLayoutManager(layoutManager);
 
-        addCityAdapter = new AddCityAdapter(this);
+        addCityAdapter = new AddCityAdapter(this, data);
         recyclerView.setAdapter(addCityAdapter);
 
         weatherDatabase = WeatherDatabase.getAppDatabase(this);
         List<Weather> weathers = getWeather();
-        addWeather("Odense", "DK");
+
 
     }
 
     @Override
-    public void onItemClicked(String city) {
+    public void onItemClicked(String string) {
+        String[] out = string.split(",");
+        String city = out[0];
+        String countryCode = out[1].trim();
+        addWeather(city, countryCode);
 
     }
 
@@ -120,6 +135,9 @@ public class AddCityActivity extends AppCompatActivity implements ItemClicked {
                 if (response.body() != null) {
                     FindCity findCity = response.body();
 //                    textView.setText(currentWeatherData.getSys().getCountry());
+                    data = (ArrayList<com.example.androidweatherapp.api.models.findcity.List>) findCity.getList();
+                    addCityAdapter = new AddCityAdapter(AddCityActivity.this, data);
+                    recyclerView.setAdapter(addCityAdapter);
                 }
             }
 

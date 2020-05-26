@@ -10,15 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidweatherapp.R;
+import com.example.androidweatherapp.api.models.findcity.List;
 import com.example.androidweatherapp.viewholders.AddCityViewHolder;
+
+import java.util.ArrayList;
 
 public class AddCityAdapter extends RecyclerView.Adapter<AddCityViewHolder>{
 
     private Context context;
-    private String[] city = {"Odense", "København"};
+    private ArrayList<com.example.androidweatherapp.api.models.findcity.List> data;
 
-    public AddCityAdapter(Context context) {
+    public AddCityAdapter(Context context, ArrayList<com.example.androidweatherapp.api.models.findcity.List> data) {
         this.context = context;
+        this.data = data;
     }
 
     @NonNull
@@ -32,13 +36,13 @@ public class AddCityAdapter extends RecyclerView.Adapter<AddCityViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull AddCityViewHolder holder, int position) {
-        holder.itemView.setTag(city[position]);
-        holder.setCityName(city[position]);
-
+            holder.itemView.setTag(data.get(position));
+            holder.setCityName(data.get(position).getName() + ", " + data.get(position).getSys().getCountry());
     }
 
     @Override
     public int getItemCount() {
-        return city.length;
+        return data.size();
     }
+
 }
