@@ -70,10 +70,10 @@ public class MainActivity extends AppCompatActivity implements ItemClicked, Coun
     }
 
     @Override
-    public void onItemClicked(String index) {
+    public void onItemClicked(String string) {
         CityWeatherFragment cityWeatherFragment = (CityWeatherFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentCityWeather);
         if (cityWeatherFragment != null) {
-            cityWeatherFragment.updateCityView(index);
+            cityWeatherFragment.updateCityView(string);
 
         } else {
             CityWeatherFragment newFragment = new CityWeatherFragment();
