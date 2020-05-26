@@ -1,29 +1,60 @@
 package com.example.androidweatherapp;
 
-import com.example.androidweatherapp.util.WeatherImageHelper;
+import android.content.Context;
+import com.example.androidweatherapp.api.models.currentweatherdata.CurrentWeatherData;
+import com.example.androidweatherapp.storage.Weather;
+import com.example.androidweatherapp.storage.WeatherDatabase;
+
+import java.util.List;
 
 public class Data {
 
-    //TODO: API DATA
+    private static Data INSTANCE;
+    private Context context;
+    private WeatherDatabase weatherDatabase;
+    private List<Weather> weatherList;
+    private List<CurrentWeatherData> currentWeatherDataList;
+    private boolean dataChange;
 
-    String[] cities = {"Odense", "København", "Vejle", "Korsør", "Slagelse", "Vemmelev", "Århus", "Aalborg", "Tarm", "Vordingborg"};
-    String[] description = {"Rain", "Drizzle", "Atmosphere", "Clear", "Rain", "Clouds", "Rain", "Drizzle", "Drizzle", "Extreme"};
-    int[] temp = {12, 16, 13, 13, 14, 18, 10, 12, 12, 9};
-
-    public Data(){
-        WeatherImageHelper weatherImageHelper = new WeatherImageHelper();
+    private Data(Context context){
+        this.context = context;
+        weatherDatabase = WeatherDatabase.getAppDatabase(this.context);
+        getWeather();
     }
 
-    public String[] getCities() {
-        return cities;
+    public static Data getInstance(Context context){
+        if (INSTANCE == null){
+            INSTANCE = new Data(context);
+        }
+
+        return INSTANCE;
     }
 
-    public String[] getDescription() {
-        return description;
+    public List<CurrentWeatherData> getCurrentWeatherDataList() {
+        return currentWeatherDataList;
     }
 
-    public int[] getTemp() {
-        return temp;
+    public void setCurrentWeatherDataList(List<CurrentWeatherData> currentWeatherDataList) {
+        this.currentWeatherDataList = currentWeatherDataList;
     }
+
+
+    public List<Weather> getWeather(){
+        updateWeatherList();
+        return weatherList;
+    }
+    private void updateWeatherList(){
+        weatherList = weatherDatabase.weatherDao().getAll();
+    }
+
+    public void addWeather(String city, String countryCode){
+        Weather weather = new Weather();
+        weather.city = city;
+        weather.countryCode = countryCode;
+        weatherDatabase.weatherDao().insert(weather);
+        updateWeatherList();
+    }
+
+
 
 }
